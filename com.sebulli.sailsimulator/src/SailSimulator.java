@@ -58,6 +58,7 @@ public class SailSimulator extends JApplet implements ActionListener {
     // The controls of the control panel
     private JSlider rudderSlider ;
 	private Compass compass;
+	private Roll roll;
 
     
     /**
@@ -100,6 +101,9 @@ public class SailSimulator extends JApplet implements ActionListener {
         compass = new Compass(this); 
         controlPanel.add(compass);
 
+        // Create the roll instrument
+        roll = new Roll(this); 
+        controlPanel.add(roll);
         
         // Add the ocean and the control panel to the mainPanel
         mainPanel.add(ocean);
@@ -163,11 +167,14 @@ public class SailSimulator extends JApplet implements ActionListener {
      * Update all components with the simulation results
      */
     public void updateComponents() {
-    	compass.setWindDirection(simulation.getWind_direction());
     	ocean.setBoat_x(simulation.getBoat_x());
     	ocean.setBoat_y(simulation.getBoat_y());
     	ocean.setBoat_direction(simulation.getBoat_direction());
     	ocean.setBoat_rudder(simulation.getBoat_rudder());
+
+    	compass.setWindDirection(simulation.getWind_direction());
+    	roll.setRollAngle(simulation.getWind_direction() * 4);
+    	
     }
     
     /**
