@@ -28,8 +28,11 @@ public class Simulation {
 	private Double boat_rudder = 0.0;
 	private Double wind_direction = 0.0;
 	private Double wind_mean_direction = 0.0;
-	private int simulatecnt =0;
-	private Double wind_random = 0.0;
+	private int simulatecnt = 0;
+	private Double random_wind_speed = 0.0;
+	private Double random_wind_direction = 0.0;
+	private Double wind_speed = 0.0;
+	private Double wind_mean_speed = 0.0;
 	
 	/**
 	 * Constructor
@@ -59,11 +62,22 @@ public class Simulation {
 		
 		// Add a random value to the wind direction
 		if (simulatecnt % 4 == 0) {
-			wind_random = (Math.random()-0.5) * 2;
+			// Calculate the wind direction, add a random value
+			Double wind_speed_limitted = wind_speed;
+			if (wind_speed_limitted > 5.0)
+				wind_speed_limitted = 5.0;
+			wind_speed_limitted+= wind_speed *0.3;
+			
+			random_wind_direction = (Math.random()-0.5) * wind_speed_limitted;
 		}
+		wind_direction += (wind_mean_direction +  random_wind_direction - wind_direction) * 0.005; 
 		
-		// Calculate the wind direction
-		wind_direction += (wind_mean_direction +  wind_random- wind_direction) * 0.01; 
+		// Add a random value to the wind speed
+		if (simulatecnt % 10 == 0) {
+			// Calculate the wind speed, add a random value
+			random_wind_speed = (Math.random()) * 0.5 + 0.5;
+		}
+		wind_speed += ( (wind_mean_speed * random_wind_speed) - wind_speed) * 0.1; 
 		
 	}
 
@@ -75,6 +89,26 @@ public class Simulation {
      */
 	public void setRudder(Double boat_rudder) {
 		this.boat_rudder = boat_rudder;
+	}
+
+    /**
+     * Setter for wind direction
+     * 
+     * @param wind_direction
+     * 		The wind direction in radiant
+     */
+	public void setWindDirection(Double wind_direction) {
+		this.wind_mean_direction = wind_direction;
+	}
+
+    /**
+     * Setter for wind speed
+     * 
+     * @param wind_speed
+     * 		Wind speed in m/s.
+     */
+	public void setWindSpeed(Double wind_speed) {
+		this.wind_mean_speed = wind_speed;
 	}
 
 	/**
@@ -135,6 +169,16 @@ public class Simulation {
 	 */
 	public Double getWind_direction() {
 		return wind_direction;
+	}
+
+	/**
+	 * Getter for the wind speed
+	 * 
+	 * @return
+	 * 		The speed in m/s
+	 */
+	public Double getWind_speed() {
+		return wind_speed;
 	}
 
 }
