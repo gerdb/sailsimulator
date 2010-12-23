@@ -32,7 +32,7 @@ public class Simulation {
 	private Double random_wind_speed = 0.0;
 	private Double random_wind_direction = 0.0;
 	private Double wind_speed = 0.0;
-	private Double wind_mean_speed = 0.0;
+	private Double wind_mean_speed = 5.0;
 	
 	/**
 	 * Constructor

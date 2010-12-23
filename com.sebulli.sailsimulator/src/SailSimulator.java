@@ -123,7 +123,7 @@ public class SailSimulator extends JApplet implements ActionListener {
         controlPanel.add(windDirectionSlider);
 
         // Create the wind speed slider
-        windSpeedSlider = new JSlider(JSlider.VERTICAL, 0, 30, 0);
+        windSpeedSlider = new JSlider(JSlider.VERTICAL, 0, 30, 5);
         windSpeedSlider.addChangeListener(new ChangeListener() {
 
 			@Override

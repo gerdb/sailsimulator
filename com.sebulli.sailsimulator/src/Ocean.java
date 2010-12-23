@@ -50,7 +50,17 @@ public class Ocean extends JPanel {
 	// The ocean and the boat
 	private Image backImage;
 	private Image boatImage;
-
+	
+	// The sail
+	private Image sailRightImage;
+	private Image sailLeftImage;
+	private Image sail1Image;
+	private Image sail2Image;
+	private Image sail3Image;
+	private Image sail4Image;
+	private enum Sailtype { RIGHT, LEFT, FLUTTER};
+	private int flutter  = 0;
+	private int anicnt = 0;
 
 	/**
 	 * Constructor 
@@ -66,6 +76,13 @@ public class Ocean extends JPanel {
         // Load the pictures
 		backImage = app.getImage (app.getCodeBase(), "pics/water_1000x1000.png");
 		boatImage = app.getImage (app.getCodeBase(), "pics/boat.png");
+		sail1Image = app.getImage (app.getCodeBase(), "pics/sail1.png");
+		sail2Image = app.getImage (app.getCodeBase(), "pics/sail2.png");
+		sail3Image = app.getImage (app.getCodeBase(), "pics/sail3.png");
+		sail4Image = app.getImage (app.getCodeBase(), "pics/sail4.png");
+		sailRightImage = app.getImage (app.getCodeBase(), "pics/sail_right.png");
+		sailLeftImage = app.getImage (app.getCodeBase(), "pics/sail_left.png");
+		
     }
 
     /**
@@ -76,6 +93,9 @@ public class Ocean extends JPanel {
      */
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
+        // Counts the frames
+        anicnt++;
         
         // Position of the boat relative to the screen 
 		Double x_pos_boat, y_pos_boat;
@@ -145,6 +165,58 @@ public class Ocean extends JPanel {
 		// Draw the boat using the AffineTransform 
 		g2d.drawImage (boatImage, affineTransform, this);
         
+		// Draw the sail 
+		
+		// Create the AffineTransform instance 
+		affineTransform = new AffineTransform();
+
+		Sailtype sailtype = Sailtype.FLUTTER;
+		
+		if (boat_direction > 0.3)
+			sailtype = Sailtype.LEFT;
+		if (boat_direction < -0.3)
+			sailtype = Sailtype.RIGHT;
+		
+		Image sailImage = null;
+		int rotate_x = 0;
+		int rotate_y = 0;
+
+		// Use the picture of the sail, depending on the sailtype
+		switch (sailtype) {
+		case LEFT:
+			sailImage = sailLeftImage;
+			rotate_x = 21;
+			rotate_y = 1;
+			break;
+		case RIGHT:
+			sailImage = sailRightImage;
+			rotate_x = 3;
+			rotate_y = 1;
+			break;
+		case FLUTTER:
+			
+			// Animate the flutter
+			if (anicnt % 4 == 0)
+				flutter ++;
+			
+			if (flutter >= 4)
+				flutter = 0;
+			if (flutter == 0) sailImage = sail1Image;
+			if (flutter == 1) sailImage = sail2Image;
+			if (flutter == 2) sailImage = sail3Image;
+			if (flutter == 3) sailImage = sail4Image;
+			rotate_x = 6;
+			rotate_y = 1;
+			break;
+		}
+
+		// Rotate the image 
+		affineTransform.translate(x_pos_boat - rotate_x, y_pos_boat-rotate_y-25);
+		affineTransform.rotate(boat_direction , rotate_x, rotate_y+25); 
+		affineTransform.rotate(boat_direction , rotate_x, rotate_y); 
+		// Draw the sail using the AffineTransform 
+		g2d.drawImage (sailImage, affineTransform, this);
+		
 		
     }
 
