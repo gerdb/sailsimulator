@@ -60,7 +60,7 @@ public class Roll extends JComponent {
         // Load the pictures
         boatImage = app.getImage (app.getCodeBase(), "pics/boat_roll.png");
         waterImage = app.getImage (app.getCodeBase(), "pics/boat_roll_water.png");
-        this.setSize(100, 100);
+        this.setSize(128, 128);
     }
     
 

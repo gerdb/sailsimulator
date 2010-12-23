@@ -60,7 +60,7 @@ public class Compass extends JComponent {
         // Load the pictures
         backImage = app.getImage (app.getCodeBase(), "pics/compass.png");
         neadleImage = app.getImage (app.getCodeBase(), "pics/compass_neadle.png");
-        this.setSize(100, 100);
+        this.setSize(126, 123);
     }
     
 
