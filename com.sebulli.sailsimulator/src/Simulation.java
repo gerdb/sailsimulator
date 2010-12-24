@@ -25,14 +25,22 @@ public class Simulation {
 	private Double boat_speed = 1.0;
 	private Double boat_x = 0.0;
 	private Double boat_y = 0.0;
+	private Double coord_north = 0.0;
+	private Double coord_east = 0.0;
 	private Double boat_rudder = 0.0;
 	private Double wind_direction = 0.0;
-	private Double wind_mean_direction = 0.0;
+	private Double wind_setpoint_direction = 0.0;
 	private int simulatecnt = 0;
 	private Double random_wind_speed = 0.0;
 	private Double random_wind_direction = 0.0;
 	private Double wind_speed = 0.0;
-	private Double wind_mean_speed = 5.0;
+	private Double wind_setpoint_speed = 5.0;
+	private Double sail_rope_setpoint = 0.5;
+	private Double sail_rope = 0.0;
+	private Double sail_angle = 0.0;
+	private Double wind_force = 0.0;
+	private Double sail_wind_angle = 0.0;
+	
 	
 	/**
 	 * Constructor
@@ -60,6 +68,10 @@ public class Simulation {
 		boat_x += boat_speed_x;
 		boat_y += boat_speed_y;
 		
+		// Calculate the coordinates
+		coord_east += boat_speed_x * 0.1;
+		coord_north += boat_speed_y * 0.1;
+		
 		// Add a random value to the wind direction
 		if (simulatecnt % 4 == 0) {
 			// Calculate the wind direction, add a random value
@@ -68,16 +80,31 @@ public class Simulation {
 				wind_speed_limitted = 5.0;
 			wind_speed_limitted+= wind_speed *0.3;
 			
-			random_wind_direction = (Math.random()-0.5) * wind_speed_limitted;
+			//random_wind_direction = (Math.random()-0.5) * wind_speed_limitted;
 		}
-		wind_direction += (wind_mean_direction +  random_wind_direction - wind_direction) * 0.005; 
+		wind_direction += (wind_setpoint_direction +  random_wind_direction - wind_direction) * 0.105; 
 		
 		// Add a random value to the wind speed
 		if (simulatecnt % 10 == 0) {
 			// Calculate the wind speed, add a random value
 			random_wind_speed = (Math.random()) * 0.5 + 0.5;
 		}
-		wind_speed += ( (wind_mean_speed * random_wind_speed) - wind_speed) * 0.1; 
+		wind_speed += ( (wind_setpoint_speed * random_wind_speed) - wind_speed) * 0.1; 
+		
+		// Calculate the maximum angle of the sail
+		sail_rope = sail_rope_setpoint * 2.0;
+		
+		// Winds blows onto the sail and changes the direction
+		sail_wind_angle = boat_direction + sail_angle - wind_direction ;
+		
+		wind_force =  wind_speed * Math.sin(sail_wind_angle);
+		sail_angle += wind_force * 0.01;
+
+		// Limit it to the sail_rope
+		if (sail_angle > sail_rope)
+			sail_angle = sail_rope;
+		if (sail_angle < -sail_rope)
+			sail_angle = -sail_rope;
 		
 	}
 
@@ -98,7 +125,7 @@ public class Simulation {
      * 		The wind direction in radiant
      */
 	public void setWindDirection(Double wind_direction) {
-		this.wind_mean_direction = wind_direction;
+		this.wind_setpoint_direction = wind_direction;
 	}
 
     /**
@@ -108,7 +135,27 @@ public class Simulation {
      * 		Wind speed in m/s.
      */
 	public void setWindSpeed(Double wind_speed) {
-		this.wind_mean_speed = wind_speed;
+		this.wind_setpoint_speed = wind_speed;
+	}
+
+	/**
+     * Setter for sail rope
+     * 
+     * @param sail_rope
+     * 		The length of the sail rope from 0.0 to 1.0
+     */
+	public void setSailRope(Double sail_rope) {
+		this.sail_rope_setpoint = sail_rope;
+	}
+
+	/**
+	 * Getter for the angle of the sail
+	 * 
+	 * @return
+	 * 		The angle in radiant
+	 */
+	public Double getSailAngle() {
+		return sail_angle;
 	}
 
 	/**
@@ -152,6 +199,26 @@ public class Simulation {
 	}
 
 	/**
+	 * Getter for the boat position
+	 * 
+	 * @return
+	 * 		The position 
+	 */
+	public Double getCoordNorth() {
+		return coord_north;
+	}
+
+	/**
+	 * Getter for the boat position
+	 * 
+	 * @return
+	 * 		The position 
+	 */
+	public Double getCoordEast() {
+		return coord_east;
+	}
+
+	/**
 	 * Getter for the rudder angle
 	 * 
 	 * @return
@@ -180,5 +247,16 @@ public class Simulation {
 	public Double getWind_speed() {
 		return wind_speed;
 	}
+	
+	/**
+	 * Getter for the sail relative to the wind angle
+	 * 
+	 * @return
+	 * 		The angle in radiant
+	 */
+	public Double getSailWind_angle() {
+		return sail_wind_angle;
+	}
+	
 
 }
