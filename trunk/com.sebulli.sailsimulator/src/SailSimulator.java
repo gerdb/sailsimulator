@@ -59,6 +59,7 @@ public class SailSimulator extends JApplet implements ActionListener {
 
     // The controls of the control panel
     private JSlider rudderSlider ;
+    private JSlider sailRopeSlider ;
     private JSlider windDirectionSlider ;
     private JSlider windSpeedSlider ;
 	private Compass compass;
@@ -88,6 +89,70 @@ public class SailSimulator extends JApplet implements ActionListener {
         //controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.PAGE_AXIS));
         controlPanel.setBounds(500, 0, 300, 500);
 
+        // Create the compass
+        compass = new Compass(this); 
+        compass.setLocation(0, 2);
+        controlPanel.add(compass);
+
+        // Create the wind direction slider
+        windDirectionSlider = new JSlider(JSlider.VERTICAL, -360, 360, 0);
+        windDirectionSlider.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				simulation.setWindDirection(((double)windDirectionSlider.getValue())/ 180 * Math.PI);
+			}
+        });
+        windDirectionSlider.setBounds(126, 5, 20, 123);
+        controlPanel.add(windDirectionSlider);
+
+        // Create the wind speed slider
+        windSpeedSlider = new JSlider(JSlider.VERTICAL, 0, 30, 5);
+        windSpeedSlider.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				simulation.setWindSpeed(((double)windSpeedSlider.getValue()));
+			}
+        });
+        windSpeedSlider.setBounds(148, 5, 20, 123);
+        controlPanel.add(windSpeedSlider);
+        
+        Font labelFont = new Font("Serif", Font.BOLD, 11);
+        Font textFielFont = new Font("Serif", Font.BOLD, 18);
+
+        // Field with the wind direction
+        JLabel labelWindDirection = new JLabel("Wind direction:");
+        labelWindDirection.setFont(labelFont);
+        labelWindDirection.setBounds(170, 5, 128, 20);
+        controlPanel.add(labelWindDirection);
+        
+        windDirection = new JTextField();
+        windDirection.setEditable(false);
+        windDirection.setFont(textFielFont);
+        windDirection.setHorizontalAlignment(JTextField.RIGHT);
+        windDirection.setBounds(170, 25, 128, 25);
+        controlPanel.add(windDirection);
+
+        // Field with the wind speed
+        JLabel labelWindSpeed = new JLabel("Wind speed:");
+        labelWindSpeed.setFont(labelFont);
+        labelWindSpeed.setBounds(170, 55, 128, 20);
+        controlPanel.add(labelWindSpeed);
+
+        windSpeed = new JTextField();
+        windSpeed.setEditable(false);
+        windSpeed.setFont(textFielFont);
+        windSpeed.setHorizontalAlignment(JTextField.RIGHT);
+        windSpeed.setBounds(170, 75, 128, 25);
+        controlPanel.add(windSpeed);
+        
+        
+        // Create the roll instrument
+        roll = new Roll(this); 
+        roll.setLocation(0,350);
+        controlPanel.add(roll);
+
         // Create the components of the control panel
         JLabel label = new JLabel("Rudder Position:");
         controlPanel.add(label);
@@ -102,72 +167,23 @@ public class SailSimulator extends JApplet implements ActionListener {
 				simulation.setRudder(((double)rudderSlider.getValue())*0.01);
 			}
         });
-        rudderSlider.setBounds(0, 30, 300, 20);
+        rudderSlider.setBounds(0, 478, 275, 20);
         controlPanel.add(rudderSlider);
         
-        // Create the compass
-        compass = new Compass(this); 
-        compass.setLocation(0, 100);
-        controlPanel.add(compass);
-
-        // Create the wind direction slider
-        windDirectionSlider = new JSlider(JSlider.VERTICAL, -360, 360, 0);
-        windDirectionSlider.addChangeListener(new ChangeListener() {
+        // Create the sail rope slider
+        sailRopeSlider = new JSlider(JSlider.VERTICAL, 0, 100, 50);
+        sailRopeSlider.addChangeListener(new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				simulation.setWindDirection(((double)windDirectionSlider.getValue())/ 180 * Math.PI);
+				simulation.setSailRope(((double)sailRopeSlider.getValue())*0.01);
 			}
         });
-        windDirectionSlider.setBounds(126, 100, 20, 123);
-        controlPanel.add(windDirectionSlider);
+        sailRopeSlider.setBounds(275, 400, 20, 95);
+        controlPanel.add(sailRopeSlider);
 
-        // Create the wind speed slider
-        windSpeedSlider = new JSlider(JSlider.VERTICAL, 0, 30, 5);
-        windSpeedSlider.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				simulation.setWindSpeed(((double)windSpeedSlider.getValue()));
-			}
-        });
-        windSpeedSlider.setBounds(148, 100, 20, 123);
-        controlPanel.add(windSpeedSlider);
-        
-        Font labelFont = new Font("Serif", Font.BOLD, 11);
-        Font textFielFont = new Font("Serif", Font.BOLD, 18);
-
-        // Field with the wind direction
-        JLabel labelWindDirection = new JLabel("Wind direction:");
-        labelWindDirection.setFont(labelFont);
-        labelWindDirection.setBounds(170, 100, 128, 20);
-        controlPanel.add(labelWindDirection);
-        
-        windDirection = new JTextField();
-        windDirection.setEditable(false);
-        windDirection.setFont(textFielFont);
-        windDirection.setHorizontalAlignment(JTextField.RIGHT);
-        windDirection.setBounds(170, 120, 128, 25);
-        controlPanel.add(windDirection);
-
-        // Field with the wind speed
-        JLabel labelWindSpeed = new JLabel("Wind speed:");
-        labelWindSpeed.setFont(labelFont);
-        labelWindSpeed.setBounds(170, 150, 128, 20);
-        controlPanel.add(labelWindSpeed);
-
-        windSpeed = new JTextField();
-        windSpeed.setEditable(false);
-        windSpeed.setFont(textFielFont);
-        windSpeed.setHorizontalAlignment(JTextField.RIGHT);
-        windSpeed.setBounds(170, 170, 128, 25);
-        controlPanel.add(windSpeed);
         
         
-        // Create the roll instrument
-        roll = new Roll(this); 
-        roll.setLocation(0,230);
-        controlPanel.add(roll);
         
         // Add the ocean and the control panel to the mainPanel
         mainPanel.add(ocean);
@@ -235,7 +251,12 @@ public class SailSimulator extends JApplet implements ActionListener {
     	ocean.setBoat_y(simulation.getBoat_y());
     	ocean.setBoat_direction(simulation.getBoat_direction());
     	ocean.setBoat_rudder(simulation.getBoat_rudder());
-
+    	ocean.setSail_angle(simulation.getSailAngle());
+    	ocean.setCoord_north(simulation.getCoordNorth());
+    	ocean.setCoord_east(simulation.getCoordEast());
+    	ocean.setSailWind_angle(simulation.getSailWind_angle());
+    	
+    	
     	compass.setWindDirection(simulation.getWind_direction());
     	roll.setRollAngle(- simulation.getBoat_rudder()/2);
     	

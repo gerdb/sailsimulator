@@ -20,10 +20,12 @@
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
+import java.text.DecimalFormat;
 
 import javax.swing.JPanel;
 
@@ -46,6 +48,12 @@ public class Ocean extends JPanel {
 	private Double boat_y = 0.0; 
 	private Double boat_direction = 0.0;
 	private Double boat_rudder = 0.0;
+	private Double sail_angle = 0.0;
+	private Double sail_wind_angle = 0.0;
+	private Double coord_north = 0.0;
+	private Double coord_east = 0.0;
+
+	
 	
 	// The ocean and the boat
 	private Image backImage;
@@ -61,6 +69,8 @@ public class Ocean extends JPanel {
 	private enum Sailtype { RIGHT, LEFT, FLUTTER};
 	private int flutter  = 0;
 	private int anicnt = 0;
+	
+	
 
 	/**
 	 * Constructor 
@@ -85,6 +95,46 @@ public class Ocean extends JPanel {
 		
     }
 
+	/**
+	 * Converts the coordinates to a string
+	 * 
+	 * @param poss
+	 * 		Prefix used, if the coordinates are positive
+	 * @param negs
+	 * 		Prefix used, if the coordinates are negative
+	 * @param coord
+	 * 		The coordinates
+	 * @return
+	 * 		The coordinate string. Unit: second
+	 */
+	private String Coord2String (String poss, String negs, Double coord){
+		String s;
+			
+		Long l;
+		Long coordl = Math.abs(coord.longValue());
+		DecimalFormat df =   new DecimalFormat  ( "00" );
+		
+		// Generates the seconds
+		l = coordl % 60;
+		s = df.format(l) + "\"";
+		coordl = coordl / 60;
+
+		// Generates the minutes
+		l = coordl % 60;
+		s = df.format(l) + "'" + s;
+		coordl = coordl / 60;
+		
+		// Generates the degrees
+		l = coordl;
+		s = df.format(l) + "°" + s;
+		if (coord >= 0)
+			s = poss + s;
+		else
+			s = negs + s;
+		
+		return s;
+	}
+	
     /**
      * Paint the component
      * 
@@ -172,9 +222,10 @@ public class Ocean extends JPanel {
 
 		Sailtype sailtype = Sailtype.FLUTTER;
 		
-		if (boat_direction > 0.3)
+		if (Math.sin(sail_wind_angle) > 0.2)
 			sailtype = Sailtype.LEFT;
-		if (boat_direction < -0.3)
+
+		if (Math.sin(sail_wind_angle) < -0.2)
 			sailtype = Sailtype.RIGHT;
 		
 		Image sailImage = null;
@@ -213,10 +264,15 @@ public class Ocean extends JPanel {
 		// Rotate the image 
 		affineTransform.translate(x_pos_boat - rotate_x, y_pos_boat-rotate_y-25);
 		affineTransform.rotate(boat_direction , rotate_x, rotate_y+25); 
-		affineTransform.rotate(boat_direction , rotate_x, rotate_y); 
+		affineTransform.rotate(sail_angle , rotate_x, rotate_y); 
 		// Draw the sail using the AffineTransform 
 		g2d.drawImage (sailImage, affineTransform, this);
 		
+		// Print the coordinates
+        g2d.setFont(new Font("Serif", Font.BOLD, 11));
+        
+		g2d.drawString(Coord2String("N","S", coord_north), 400, 450);
+		g2d.drawString(Coord2String("E","W", coord_east), 400, 470);
 		
     }
 
@@ -231,6 +287,26 @@ public class Ocean extends JPanel {
 	}
 
     /**
+     * Setter for boat north coordinates
+     * 
+     * @param coord_north
+     * 		North coordinates of the boat
+     */
+	public void setCoord_north(Double coord_north) {
+		this.coord_north = coord_north;
+	}
+
+    /**
+     * Setter for boat east coordinates
+     * 
+     * @param coord_east
+     * 		East coordinates of the boat
+     */
+	public void setCoord_east(Double coord_east) {
+		this.coord_east = coord_east;
+	}
+
+    /**
      * Setter for boat y position
      * 
      * @param boat_y
@@ -241,6 +317,26 @@ public class Ocean extends JPanel {
 	}
 
     /**
+     * Setter for the sail angle
+     * 
+     * @param sail_angle
+     * 		angle of the sail relative to the boat
+     */
+	public void setSail_angle(Double sail_angle) {
+		this.sail_angle = sail_angle;
+	}
+
+    /**
+     * Setter for the sail to wind angle
+     * 
+     * @param sail_angle
+     * 		angle of the sail relative to the boat and the wind
+     */
+	public void setSailWind_angle(Double sail_wind_angle) {
+		this.sail_wind_angle = sail_wind_angle;
+	}
+
+	/**
      * Setter for boat direction
      * 
      * @param boat_direction
