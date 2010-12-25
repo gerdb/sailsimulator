@@ -222,10 +222,10 @@ public class Ocean extends JPanel {
 
 		Sailtype sailtype = Sailtype.FLUTTER;
 		
-		if (Math.sin(sail_wind_angle) > 0.2)
+		if (Math.sin(sail_wind_angle) > 0.1)
 			sailtype = Sailtype.LEFT;
 
-		if (Math.sin(sail_wind_angle) < -0.2)
+		if (Math.sin(sail_wind_angle) < -0.1)
 			sailtype = Sailtype.RIGHT;
 		
 		Image sailImage = null;

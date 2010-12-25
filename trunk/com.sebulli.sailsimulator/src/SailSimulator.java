@@ -258,7 +258,7 @@ public class SailSimulator extends JApplet implements ActionListener {
     	
     	
     	compass.setWindDirection(simulation.getWind_direction());
-    	roll.setRollAngle(- simulation.getBoat_rudder()/2);
+    	roll.setRollAngle(simulation.getRoll_angle());
     	
     	// Update these components every 20ms x 25 = 400ms
     	calm ++;
