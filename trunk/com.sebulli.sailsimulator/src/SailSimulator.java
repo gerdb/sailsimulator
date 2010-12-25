@@ -63,6 +63,7 @@ public class SailSimulator extends JApplet implements ActionListener {
     private JSlider windDirectionSlider ;
     private JSlider windSpeedSlider ;
 	private Compass compass;
+	private Earth earth;
 	private Roll roll;
 	private JTextField windDirection;
 	private JTextField windSpeed;
@@ -147,6 +148,10 @@ public class SailSimulator extends JApplet implements ActionListener {
         windSpeed.setBounds(170, 75, 128, 25);
         controlPanel.add(windSpeed);
         
+        // Create the earth control
+        earth = new Earth(this); 
+        earth.setLocation(5,150);
+        controlPanel.add(earth);
         
         // Create the roll instrument
         roll = new Roll(this); 
@@ -256,8 +261,10 @@ public class SailSimulator extends JApplet implements ActionListener {
     	ocean.setCoord_east(simulation.getCoordEast());
     	ocean.setSailWind_angle(simulation.getSailWind_angle());
     	
-    	
     	compass.setWindDirection(simulation.getWind_direction());
+
+    	earth.setCoordinates(simulation.getCoordNorth(), simulation.getCoordEast());
+    	
     	roll.setRollAngle(simulation.getRoll_angle());
     	
     	// Update these components every 20ms x 25 = 400ms
