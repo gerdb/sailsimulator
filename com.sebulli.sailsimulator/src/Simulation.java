@@ -90,11 +90,11 @@ public class Simulation {
 		boat_y += boat_speed_orth * Math.sin(boat_direction);
 		
 		// Calculate the coordinates
-		//coord_east += boat_speed_x * 0.1;
-		//coord_north += boat_speed_y * 0.1;
+		coord_east += boat_speed_x * 0.1;
+		coord_north += boat_speed_y * 0.1;
 		
-		coord_east += 0.1;
-		coord_north += 0.01;
+		//coord_east += 0.1;
+		//coord_north += 0.01;
 		
 		// Add a random value to the wind direction
 		if (simulatecnt % 4 == 0) {
