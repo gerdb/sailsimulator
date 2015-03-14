@@ -1,0 +1,1 @@
+Simulates a (model) sail boat
